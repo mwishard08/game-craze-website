@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Craze — Buy, Sell &amp; Trade Video Games | Rochester &amp; Webster, NY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#150A2B;
+    --bg-panel:#221241;
+    --bg-panel-2:#2C1854;
+    --neon-pink:#FF2E92;
+    --neon-cyan:#29F1E0;
+    --neon-yellow:#FFC93C;
+    --text-light:#F3EFFF;
+    --text-dim:#B4A3D6;
+    --line:#3C2568;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-deep);
+    color:var(--text-light);
+    font-family:'Space Grotesk', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  .display{font-family:'Press Start 2P', monospace;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  /* scanline atmosphere */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.025) 0px,
+      rgba(255,255,255,0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events:none;
+    z-index:999;
+    mix-blend-mode:overlay;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 24px;}
+  section{position:relative;}
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(21,10,43,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Press Start 2P', monospace;
+    font-size:14px;
+    letter-spacing:1px;
+  }
+  .logo .cart{
+    width:22px; height:18px;
+    background:var(--neon-pink);
+    clip-path:polygon(0 0, 80% 0, 100% 30%, 100% 100%, 0 100%);
+    box-shadow:0 0 10px var(--neon-pink);
+  }
+  .logo span{color:var(--neon-cyan); text-shadow:0 0 8px rgba(41,241,224,0.6);}
+  .navlinks{display:flex; gap:28px; font-size:14px; font-weight:600;}
+  .navlinks a{color:var(--text-dim); transition:color .2s;}
+  .navlinks a:hover{color:var(--neon-yellow);}
+  .nav-cta{
+    background:var(--neon-pink); color:var(--bg-deep);
+    padding:10px 18px; font-weight:700; font-size:13px;
+    border-radius:3px;
+    box-shadow:0 0 14px rgba(255,46,146,0.55);
+    white-space:nowrap;
+  }
+  .menu-toggle{display:none; background:none; border:none; color:var(--text-light); font-size:24px; cursor:pointer;}
+
+  /* HERO */
+  .hero{
+    padding:100px 24px 90px;
+    text-align:center;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(255,46,146,0.16), transparent 55%),
+      radial-gradient(ellipse at 80% 30%, rgba(41,241,224,0.14), transparent 55%),
+      var(--bg-deep);
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--neon-yellow);
+    border:1px solid rgba(255,201,60,0.4);
+    padding:6px 14px;
+    border-radius:20px;
+    margin-bottom:28px;
+  }
+  .hero h1{
+    font-family:'Press Start 2P', monospace;
+    font-size:clamp(28px, 6vw, 58px);
+    line-height:1.35;
+    color:var(--neon-pink);
+    text-shadow:
+      0 0 6px rgba(255,46,146,0.8),
+      0 0 24px rgba(255,46,146,0.5),
+      0 0 48px rgba(255,46,146,0.25);
+    animation:flicker 5s infinite;
+  }
+  @keyframes flicker{
+    0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;}
+    20%,22%,24%,55%{opacity:0.82;}
+  }
+  .hero h1 .cyan{
+    color:var(--neon-cyan);
+    text-shadow:0 0 6px rgba(41,241,224,0.8), 0 0 24px rgba(41,241,224,0.5);
+  }
+  .hero p{
+    max-width:560px; margin:28px auto 0;
+    color:var(--text-dim);
+    font-size:17px;
+  }
+  .hero-ctas{
+    margin-top:38px;
+    display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+  }
+  .btn{
+    padding:14px 26px;
+    border-radius:4px;
+    font-weight:700;
+    font-size:15px;
+    display:inline-block;
+    transition:transform .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{
+    background:var(--neon-yellow); color:var(--bg-deep);
+    box-shadow:0 0 20px rgba(255,201,60,0.45);
+  }
+  .btn-outline{
+    border:1.5px solid var(--neon-cyan); color:var(--neon-cyan);
+    box-shadow:0 0 14px rgba(41,241,224,0.25) inset;
+  }
+
+  @media (max-width:640px){ .hero{padding:70px 20px 60px;} }
+
+  /* SECTION HEADERS */
+  .sec-head{text-align:center; max-width:600px; margin:0 auto 52px;}
+  .sec-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:3px;
+    color:var(--neon-cyan);
+    margin-bottom:12px;
+    display:block;
+  }
+  .sec-head h2{
+    font-family:'Press Start 2P', monospace;
+    font-size:clamp(20px,3.6vw,30px);
+    line-height:1.5;
+  }
+  .sec-head p{color:var(--text-dim); margin-top:16px; font-size:15.5px;}
+
+  /* SERVICES — cartridge cards */
+  .services{padding:100px 24px;}
+  .cart-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:22px;
+  }
+  @media (max-width:900px){ .cart-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .cart-grid{grid-template-columns:1fr;} }
+
+  .cart-card{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    clip-path:polygon(0 0, 84% 0, 100% 18%, 100% 100%, 0 100%);
+    padding:32px 22px 26px;
+    transition:transform .2s ease, border-color .2s ease;
+    position:relative;
+  }
+  .cart-card:hover{
+    transform:translateY(-6px);
+    border-color:var(--accent, var(--neon-pink));
+  }
+  .cart-card .icon{
+    width:44px; height:44px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+    margin-bottom:20px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.04);
+  }
+  .cart-card h3{font-size:18px; margin-bottom:10px; font-weight:700;}
+  .cart-card p{color:var(--text-dim); font-size:14.5px;}
+  .cart-card:nth-child(1){ --accent:var(--neon-pink); }
+  .cart-card:nth-child(2){ --accent:var(--neon-cyan); }
+  .cart-card:nth-child(3){ --accent:var(--neon-yellow); }
+  .cart-card:nth-child(4){ --accent:var(--neon-pink); }
+  .cart-card:nth-child(1) .icon{color:var(--neon-pink);}
+  .cart-card:nth-child(2) .icon{color:var(--neon-cyan);}
+  .cart-card:nth-child(3) .icon{color:var(--neon-yellow);}
+  .cart-card:nth-child(4) .icon{color:var(--neon-pink);}
+
+  /* CASH BANNER */
+  .cash-banner{
+    margin:0 24px;
+    background:linear-gradient(120deg, rgba(255,46,146,0.16), rgba(41,241,224,0.1));
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:52px 40px;
+    display:flex; align-items:center; justify-content:space-between; gap:32px;
+    flex-wrap:wrap;
+    max-width:1092px; margin-left:auto; margin-right:auto;
+  }
+  .cash-banner .txt h2{
+    font-family:'Press Start 2P', monospace;
+    font-size:clamp(18px,3vw,26px);
+    color:var(--neon-yellow);
+    text-shadow:0 0 16px rgba(255,201,60,0.4);
+    margin-bottom:14px; line-height:1.5;
+  }
+  .cash-banner .txt p{color:var(--text-dim); max-width:440px; font-size:15px;}
+  .cash-banner .price-tag{
+    font-family:'JetBrains Mono', monospace;
+    background:var(--bg-deep); border:1.5px dashed var(--neon-yellow);
+    color:var(--neon-yellow);
+    padding:18px 22px; border-radius:8px; font-size:13px; text-align:center;
+    min-width:200px;
+  }
+  .price-tag strong{display:block; font-size:15px; margin-bottom:6px; color:var(--text-light);}
+
+  /* LOCATIONS */
+  .locations{padding:100px 24px;}
+  .loc-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:26px;
+  }
+  @media (max-width:760px){ .loc-grid{grid-template-columns:1fr;} }
+  .loc-card{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:34px;
+    position:relative;
+    overflow:hidden;
+  }
+  .loc-card::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+  }
+  .loc-card .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:2px; color:var(--neon-cyan);
+    margin-bottom:10px; display:block;
+  }
+  .loc-card h3{font-size:24px; margin-bottom:18px;}
+  .loc-row{display:flex; gap:12px; margin-bottom:12px; color:var(--text-dim); font-size:14.5px;}
+  .loc-row b{color:var(--text-light); min-width:64px; display:inline-block; font-weight:600;}
+  .loc-card a.phone{color:var(--neon-yellow); font-weight:700;}
+
+  /* FAQ */
+  .faq{padding:100px 24px;}
+  .faq-list{max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:12px;}
+  .faq-item{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:8px; overflow:hidden;
+  }
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none; color:var(--text-light);
+    padding:20px 22px; font-size:15.5px; font-weight:600; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    font-family:inherit;
+  }
+  .faq-q .plus{
+    font-family:'JetBrains Mono', monospace; color:var(--neon-pink); font-size:20px;
+    transition:transform .25s ease; flex-shrink:0;
+  }
+  .faq-item.open .faq-q .plus{transform:rotate(45deg);}
+  .faq-a{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    color:var(--text-dim); font-size:14.5px;
+  }
+  .faq-a-inner{padding:0 22px 20px;}
+  .faq-item.open .faq-a{max-height:280px;}
+
+  /* FOOTER */
+  footer{
+    border-top:1px solid var(--line);
+    padding:56px 24px 32px;
+    background:var(--bg-panel);
+  }
+  .foot-grid{
+    display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px;
+    margin-bottom:40px;
+  }
+  @media (max-width:700px){ .foot-grid{grid-template-columns:1fr;} }
+  .foot-grid h4{font-size:13px; letter-spacing:2px; color:var(--neon-cyan); margin-bottom:16px; font-family:'JetBrains Mono',monospace;}
+  .foot-grid p, .foot-grid a{color:var(--text-dim); font-size:14px; display:block; margin-bottom:8px;}
+  .foot-grid a:hover{color:var(--neon-yellow);}
+  .foot-bottom{
+    text-align:center; color:var(--text-dim); font-size:13px;
+    padding-top:24px; border-top:1px solid var(--line);
+    font-family:'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><span class="cart"></span>GAME<span>CRAZE</span></div>
+    <div class="navlinks">
+      <a href="#services">What We Do</a>
+      <a href="#sell">Sell Your Stuff</a>
+      <a href="#locations">Locations</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="#locations" class="nav-cta">Visit a Store</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">ROCHESTER &amp; WEBSTER, NY</span>
+    <h1>GET MORE.<br>PAY <span class="cyan">LESS.</span></h1>
+    <p>Two local game stores stacked with new releases, retro classics, and consoles — plus the best cash and trade-in offers in the area.</p>
+    <div class="hero-ctas">
+      <a href="#sell" class="btn btn-primary">Sell Your Games</a>
+      <a href="#locations" class="btn btn-outline">Find a Store</a>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">THE LINEUP</span>
+      <h2>Four Ways We Level Up<br>Your Collection</h2>
+      <p>Every system, every genre, new and retro. If it plugs into a TV, we probably deal in it.</p>
+    </div>
+    <div class="cart-grid">
+      <div class="cart-card">
+        <div class="icon">▲</div>
+        <h3>Buy</h3>
+        <p>New releases and retro classics across every console we can get our hands on, priced to beat the big box stores.</p>
+      </div>
+      <div class="cart-card">
+        <div class="icon">$</div>
+        <h3>Sell</h3>
+        <p>Bring in your games, systems, accessories, and old TVs for cash on the spot — no appointment needed.</p>
+      </div>
+      <div class="cart-card">
+        <div class="icon">⇄</div>
+        <h3>Trade</h3>
+        <p>Swap what you're done playing for store credit at a better rate than cash — the fastest way to your next game.</p>
+      </div>
+      <div class="cart-card">
+        <div class="icon">✦</div>
+        <h3>Repair</h3>
+        <p>Scratched discs get a free warranty repair if bought at Game Craze, or $10 flat if bought anywhere else.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sell" id="sell">
+  <div class="cash-banner">
+    <div class="txt">
+      <h2>NEED CASH<br>FOR YOUR GAMES?</h2>
+      <p>We pay the most for your consoles, controllers, discs, and even old TVs — all genres, all condition levels. Trade-in credit pays even better than cash.</p>
+    </div>
+    <div class="price-tag">
+      <strong>How it works</strong>
+      Bring your items in-store for a free quote.<br>No phone quotes — condition matters.
+    </div>
+  </div>
+</section>
+
+<section class="locations" id="locations">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">FIND US</span>
+      <h2>Two Stores.<br>Zero Reasons to Shop Elsewhere.</h2>
+    </div>
+    <div class="loc-grid">
+      <div class="loc-card">
+        <span class="tag">LOCATION 01</span>
+        <h3>East Ave</h3>
+        <div class="loc-row"><b>Address</b> 1751 East Avenue, Rochester, NY 14610</div>
+        <div class="loc-row"><b>Phone</b> <a class="phone mono" href="tel:5854427970">(585) 442-7970</a></div>
+        <div class="loc-row"><b>Mon–Sat</b> 11am – 8pm</div>
+        <div class="loc-row"><b>Sunday</b> 12pm – 5pm</div>
+      </div>
+      <div class="loc-card">
+        <span class="tag">LOCATION 02</span>
+        <h3>Webster</h3>
+        <div class="loc-row"><b>Address</b> 23 West Main Street, Webster, NY 14580</div>
+        <div class="loc-row"><b>Phone</b> <a class="phone mono" href="tel:5858722360">(585) 872-2360</a></div>
+        <div class="loc-row"><b>Mon–Sat</b> 11am – 8pm</div>
+        <div class="loc-row"><b>Sunday</b> 12pm – 5pm</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">GOOD TO KNOW</span>
+      <h2>Frequently Asked<br>Questions</h2>
+    </div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q">How much will I get for my stuff? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">We can't quote a price over the phone — value depends on the model, condition, demand, and what we've already got in stock. Bring it in for a free, no-obligation look.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Cash or trade-in — which is better? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">We pay cash on the spot, but trade-in credit toward store merchandise almost always gets you more value than cash does.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Do you price-match? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">We update our values daily to stay competitive and consistently offer some of the best trade-in and cash prices around.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Nobody's answering the phone — why? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">In-store customers come first, so during busy stretches calls can go unanswered. Please try again or stop by in person.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Can you repair a broken system? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">We no longer service broken systems, but we're happy to do free in-store troubleshooting to help figure out what's wrong.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Can you fix a scratched disc? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes — most scratches and cosmetic damage are fixable, usually within 1–3 days. Free if the game was purchased at Game Craze, $10 flat otherwise.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Can I see your inventory or prices online? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Not yet — our stock changes constantly across hundreds of thousands of items. Give a store a call and we'll happily check for you.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Where can I use my Game Craze gift card? <span class="plus">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Gift cards work at the store where they were issued, plus any locations explicitly listed on the card itself.</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;"><span class="cart"></span>GAME<span>CRAZE</span></div>
+        <p>Premier video game stores serving Rochester and Webster, NY. Get more, pay less.</p>
+      </div>
+      <div>
+        <h4>STORES</h4>
+        <a href="tel:5854427970">East Ave — (585) 442-7970</a>
+        <a href="tel:5858722360">Webster — (585) 872-2360</a>
+      </div>
+      <div>
+        <h4>HOURS</h4>
+        <p>Mon–Sat: 11am – 8pm</p>
+        <p>Sunday: 12pm – 5pm</p>
+      </div>
+    </div>
+    <div class="foot-bottom">© 2026 GAME CRAZE. ALL RIGHTS RESERVED.</div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => { if(i !== item) i.classList.remove('open'); });
+      item.classList.toggle('open', !isOpen);
+    });
+  });
+</script>
+
+</body>
+</html>
