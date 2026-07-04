@@ -85,7 +85,24 @@
     box-shadow:0 0 14px rgba(255,46,146,0.55);
     white-space:nowrap;
   }
-  .menu-toggle{display:none; background:none; border:none; color:var(--text-light); font-size:24px; cursor:pointer;}
+  .menu-toggle{display:none; background:none; border:none; color:var(--text-light); font-size:26px; cursor:pointer; line-height:1; padding:4px;}
+
+  @media (max-width:760px){
+    nav.wrap{padding:14px 20px;}
+    .logo{font-size:11px;}
+    .navlinks{
+      display:none;
+      position:absolute; top:100%; left:0; right:0;
+      background:var(--bg-panel);
+      border-bottom:1px solid var(--line);
+      flex-direction:column; gap:0; padding:8px 0;
+    }
+    .navlinks.open{display:flex;}
+    .navlinks a{padding:14px 24px; border-top:1px solid var(--line);}
+    .navlinks a:first-child{border-top:none;}
+    .nav-cta{display:none;}
+    .menu-toggle{display:block;}
+  }
 
   /* HERO */
   .hero{
@@ -318,13 +335,14 @@
 <header>
   <nav class="wrap">
     <div class="logo"><span class="cart"></span>GAME<span>CRAZE</span></div>
-    <div class="navlinks">
+    <div class="navlinks" id="navlinks">
       <a href="#services">What We Do</a>
       <a href="#sell">Sell Your Stuff</a>
       <a href="#locations">Locations</a>
       <a href="#faq">FAQ</a>
     </div>
     <a href="#locations" class="nav-cta">Visit a Store</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
   </nav>
 </header>
 
@@ -487,6 +505,19 @@
 </footer>
 
 <script>
+  const menuToggle = document.getElementById('menuToggle');
+  const navlinks = document.getElementById('navlinks');
+  menuToggle.addEventListener('click', () => {
+    navlinks.classList.toggle('open');
+    menuToggle.textContent = navlinks.classList.contains('open') ? '✕' : '☰';
+  });
+  navlinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navlinks.classList.remove('open');
+      menuToggle.textContent = '☰';
+    });
+  });
+
   document.querySelectorAll('.faq-q').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.closest('.faq-item');
